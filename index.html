@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OrbitKeep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Phosphor:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body.bw { margin: 0; }
+    .ok-view { display: none; }
+    .ok-view.active { display: block; }
+
+    /* ═══ LANDING ═══ */
+    .ok-hero{position:relative;border-radius:24px;overflow:hidden;margin-bottom:20px;min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;padding:32px 28px;background:linear-gradient(180deg,rgba(0,0,0,.02) 0%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.78) 100%),url('https://reson-assets.clawdy.dev/avatars/f7136d3d-74f6-4148-89be-f5e94b5c5e02.png');background-size:cover;background-position:center}
+    .ok-hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);padding:5px 14px;border-radius:999px;font-size:12px;font-weight:600;color:white;margin-bottom:14px;width:fit-content;letter-spacing:.03em}
+    .ok-hero-badge i{font-size:14px}
+    .ok-hero h1{font-size:38px;line-height:1.1;margin:0 0 10px;color:white;font-weight:700}
+    .ok-hero h1 span{font-weight:200}
+    .ok-hero-tagline{font-size:16px;color:rgba(255,255,255,.82);max-width:460px;line-height:1.55;margin:0 0 20px}
+    .ok-hero .bw-btn{background:white;color:#1a1a1a}
+    .ok-hero .bw-btn:hover{background:rgba(255,255,255,.9)}
+    .ok-problem-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch;margin-bottom:0}
+    .ok-problem-img{border-radius:20px;overflow:hidden;min-height:200px;background:url('https://reson-assets.clawdy.dev/avatars/390bad83-3d17-4a2d-b77c-a7e5d5574986.png');background-size:cover;background-position:center}
+    .ok-problem-body{display:flex;flex-direction:column;justify-content:center}
+    .ok-problem-quote{font-size:17px;line-height:1.7;color:var(--bw-text-2);font-style:italic;margin:0}
+    .ok-problem-quote b{color:var(--bw-text-1);font-style:normal;font-weight:600}
+    .ok-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .ok-step{border-radius:20px;overflow:hidden;background:var(--bw-card);border:1px solid var(--bw-border)}
+    .ok-step-img{height:120px;background-size:cover;background-position:center}
+    .ok-step-body{padding:16px;text-align:center}
+    .ok-step-num{width:32px;height:32px;border-radius:50%;background:var(--bw-blue);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin:0 auto 8px}
+    .ok-step-title{font-weight:600;font-size:14px;margin-bottom:4px}
+    .ok-step-copy{font-size:12.5px;color:var(--bw-text-3);line-height:1.5}
+    .ok-feats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .ok-feat-card{display:flex;gap:14px;align-items:center;padding:14px;background:var(--bw-card);border:1px solid var(--bw-border);border-radius:18px;transition:border-color .15s}
+    .ok-feat-card:hover{border-color:var(--bw-support-amber)}
+    .ok-feat-img{width:56px;height:56px;border-radius:14px;flex-shrink:0;background-size:cover;background-position:center}
+    .ok-feat-title{font-weight:600;font-size:14px;margin-bottom:2px}
+    .ok-feat-copy{font-size:12.5px;color:var(--bw-text-3);line-height:1.4}
+    .ok-social{display:flex;align-items:center;justify-content:center;gap:16px;padding:20px 0}
+    .ok-social-avatars{display:flex}
+    .ok-social-avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--bw-bg);background-size:cover;background-position:center;margin-left:-8px}
+    .ok-social-avatar:first-child{margin-left:0}
+    .ok-social-text{font-size:13px;color:var(--bw-text-3)}
+    .ok-social-text b{color:var(--bw-text-1)}
+
+    /* ═══ ORBIT DASHBOARD ═══ */
+    .ok-orbit-wrap { position: relative; width: 100%; max-width: 500px; margin: 0 auto 24px; }
+    .ok-orbit-svg { width: 100%; height: auto; }
+    .ok-orbit-ring { fill: none; stroke: var(--bw-border); stroke-width: 1; stroke-dasharray: 4 4; }
+    .ok-orbit-ring--inner { stroke: rgba(37,86,182,0.15); stroke-dasharray: none; }
+    .ok-orbit-center { fill: var(--bw-blue); }
+    .ok-orbit-center-text { fill: white; font-family: Sora, sans-serif; font-weight: 700; font-size: 18px; text-anchor: middle; dominant-baseline: central; }
+    .ok-orbit-center-sub { fill: rgba(255,255,255,0.7); font-family: Sora, sans-serif; font-weight: 400; font-size: 9px; text-anchor: middle; }
+    .ok-orbit-node { cursor: pointer; transition: transform 0.2s ease; }
+    .ok-orbit-node:hover { transform: scale(1.15); }
+    .ok-orbit-node circle { stroke: white; stroke-width: 2; }
+    .ok-orbit-node text { font-family: Sora, sans-serif; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+    .ok-orbit-label { font-family: Sora, sans-serif; font-size: 10px; fill: var(--bw-text-3); text-anchor: middle; }
+    .ok-orbit-legend { display: flex; gap: 16px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .ok-orbit-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--bw-text-3); }
+    .ok-orbit-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    .ok-orbit-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+
+    .ok-orbit-tooltip {
+      position: absolute; background: var(--bw-card); border: 1px solid var(--bw-border);
+      border-radius: 14px; padding: 12px 16px; pointer-events: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12); z-index: 10;
+      opacity: 0; transition: opacity 0.15s; min-width: 180px;
+    }
+    .ok-orbit-tooltip.show { opacity: 1; }
+    .ok-orbit-tooltip-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .ok-orbit-tooltip-meta { font-size: 12px; color: var(--bw-text-3); line-height: 1.5; }
+
+    /* ── Dashboard (below orbit) ── */
+    .ok-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .ok-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .ok-card { background: var(--bw-card); border: 1px solid var(--bw-border); border-radius: 24px; padding: 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; position: relative; overflow: hidden; }
+    .ok-card:hover { border-color: var(--bw-support-amber); box-shadow: 0 2px 14px rgba(244,159,106,.12); }
+    .ok-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .ok-card-name { font-weight: 600; font-size: 15px; line-height: 1.3; }
+    .ok-card-status { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; padding-top: 2px; }
+    .ok-card-memo { font-size: 13px; color: var(--bw-text-3); margin-bottom: 10px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ok-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .ok-card-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--bw-text-3); padding-top: 8px; border-top: 1px solid var(--bw-border); }
+    .ok-card-foot span:last-child { font-weight: 500; }
+    .ok-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 3px; }
+    .ok-card--overdue { background: linear-gradient(135deg, rgba(243,100,64,.04) 0%, var(--bw-card) 60%); border-left: 3px solid var(--bw-orange); }
+    .ok-card--soon { background: linear-gradient(135deg, rgba(255,209,92,.06) 0%, var(--bw-card) 60%); border-left: 3px solid var(--bw-support-amber); }
+    .ok-card--on-track { border-left: 3px solid var(--bw-border); }
+
+    /* ── Detail ── */
+    .ok-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .ok-detail-label { font-size: 12px; color: var(--bw-text-3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+    .ok-detail-value { font-size: 14px; }
+    .ok-interaction { padding: 10px 0; border-bottom: 1px solid var(--bw-border); display: flex; gap: 12px; }
+    .ok-interaction:last-child { border-bottom: none; }
+    .ok-interaction-date { font-size: 13px; font-weight: 500; min-width: 90px; color: var(--bw-blue); }
+    .ok-interaction-notes { font-size: 13px; color: var(--bw-text-3); }
+    .ok-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .ok-form-row3 { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; align-items: end; margin-bottom: 12px; }
+
+    /* ── Science ── */
+    .ok-sci-hero{text-align:center;padding:28px 0 24px;border-bottom:1px solid var(--bw-border);margin-bottom:20px}
+    .ok-sci-hero h1{font-size:32px;line-height:1.15;margin:0 0 8px}
+    .ok-sci-hero-sub{font-size:16px;color:var(--bw-text-3);max-width:520px;margin:0 auto 16px;line-height:1.55}
+    .ok-sci-hero-cite{font-size:12px;color:var(--bw-text-4)}
+    .ok-sci-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+    .ok-sci-stage{background:var(--bw-card);border:1px solid var(--bw-border);border-radius:20px;padding:20px;text-align:center}
+    .ok-sci-stage-num{font-size:36px;font-weight:700;color:var(--bw-blue);line-height:1;margin-bottom:4px}
+    .ok-sci-stage-label{font-size:13px;color:var(--bw-text-3);margin-bottom:8px}
+    .ok-sci-stage-range{font-size:12px;color:var(--bw-text-4)}
+    .ok-sci-stage-bar{height:6px;border-radius:3px;background:var(--bw-muted);margin-top:12px;overflow:hidden}
+    .ok-sci-stage-bar-fill{height:100%;border-radius:3px;background:var(--bw-blue)}
+    .ok-sci-dunbar{display:flex;flex-direction:column;gap:6px}
+    .ok-sci-dunbar-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:12px;background:var(--bw-card);border:1px solid var(--bw-border)}
+    .ok-sci-dunbar-count{font-size:15px;font-weight:700;min-width:50px;color:var(--bw-blue);text-align:right}
+    .ok-sci-dunbar-bar{height:8px;border-radius:4px;flex:1;background:var(--bw-muted);overflow:hidden}
+    .ok-sci-dunbar-bar-fill{height:100%;border-radius:4px;background:var(--bw-blue)}
+    .ok-sci-dunbar-label{font-size:13px;min-width:120px;color:var(--bw-text-2)}
+    .ok-sci-pace{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .ok-sci-pace-card{padding:16px;border-radius:16px;background:var(--bw-card);border:1px solid var(--bw-border)}
+    .ok-sci-pace-title{font-weight:600;font-size:14px;margin-bottom:4px}
+    .ok-sci-pace-hours{font-size:13px;color:var(--bw-blue);font-weight:600;margin-bottom:6px}
+    .ok-sci-pace-copy{font-size:12.5px;color:var(--bw-text-3);line-height:1.45}
+    .ok-sci-caveat{padding:16px 20px;border-radius:16px;background:var(--bw-muted);border-left:3px solid var(--bw-support-amber);font-size:13.5px;color:var(--bw-text-2);line-height:1.6}
+    .ok-sci-caveat b{color:var(--bw-text-1)}
+
+    @media (max-width: 600px) {
+      .ok-hero{min-height:260px;padding:24px 20px}.ok-hero h1{font-size:28px}
+      .ok-problem-row,.ok-steps,.ok-feats-grid,.ok-sci-stages,.ok-sci-pace,.ok-whatis-cols{grid-template-columns:1fr}
+      .ok-problem-img{min-height:160px;order:-1}
+      .ok-detail-grid,.ok-form-grid,.ok-form-row3{grid-template-columns:1fr}
+      .ok-cards{grid-template-columns:1fr}
+      .ok-orbit-stat-row{grid-template-columns:repeat(2,1fr)}
+    }
+  /* ── Science / How it works ── */
+    .ok-sci-hero {
+      text-align: center; padding: 8px 0 20px;
+    }
+    .ok-sci-hero h1 { font-size: 28px; line-height: 1.15; margin: 8px 0 10px; }
+    .ok-sci-hero .bw-summary { max-width: 540px; margin: 0 auto; }
+    .ok-sci-pillrow {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      margin: 16px 0 4px;
+    }
+    .ok-sci-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--bw-muted); border: 1px solid var(--bw-border);
+      font-size: 13px; font-weight: 600; color: var(--bw-text-2);
+    }
+    .ok-sci-pill b { color: var(--bw-blue); font-size: 15px; }
+    .ok-sci-pill.ok-sci-pill--em {
+      background: rgba(37,86,182,0.08); border-color: rgba(37,86,182,0.25);
+      color: var(--bw-text-1);
+    }
+    .ok-sci-stage {
+      display: grid; grid-template-columns: 1fr; gap: 10px;
+    }
+    .ok-sci-stage-card {
+      display: grid; grid-template-columns: 72px 1fr; gap: 12px;
+      align-items: center;
+      padding: 14px 16px; border-radius: 18px;
+      background: var(--bw-card); border: 1px solid var(--bw-border);
+    }
+    .ok-sci-stage-hrs {
+      font-size: 22px; font-weight: 700; color: var(--bw-blue);
+      line-height: 1.1; text-align: center;
+    }
+    .ok-sci-stage-hrs span {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--bw-text-3); text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .ok-sci-stage-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+    .ok-sci-stage-copy { font-size: 12.5px; color: var(--bw-text-3); line-height: 1.45; }
+    .ok-sci-map {
+      display: grid; grid-template-columns: 1fr; gap: 8px;
+    }
+    .ok-sci-map-row {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px;
+      align-items: center; padding: 12px 14px; border-radius: 14px;
+      background: var(--bw-muted); border: 1px solid var(--bw-border);
+    }
+    .ok-sci-map-row strong { font-size: 13px; }
+    .ok-sci-map-row p { margin: 2px 0 0; font-size: 12px; color: var(--bw-text-3); line-height: 1.4; }
+    .ok-sci-badge-freq {
+      font-size: 12px; font-weight: 700; color: var(--bw-blue);
+      white-space: nowrap; padding: 6px 10px; border-radius: 999px;
+      background: rgba(37,86,182,0.1);
+    }
+    .ok-sci-layer {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--bw-border);
+    }
+    .ok-sci-layer:last-child { border-bottom: none; }
+    .ok-sci-layer-n {
+      min-width: 52px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white;
+      background: var(--bw-blue);
+    }
+    .ok-sci-layer-n.ok-sci-layer-n--outer { background: var(--bw-text-4); }
+    .ok-sci-layer-n.ok-sci-layer-n--mid { background: #4A7FD4; }
+    .ok-sci-layer-body { flex: 1; }
+    .ok-sci-layer-title { font-weight: 600; font-size: 13px; }
+    .ok-sci-layer-copy { font-size: 12px; color: var(--bw-text-3); }
+    .ok-sci-caveat {
+      padding: 12px 14px; border-radius: 14px; margin-bottom: 8px;
+      border-left: 3px solid var(--bw-orange);
+      background: rgba(243,100,64,0.06);
+      font-size: 13px; line-height: 1.5; color: var(--bw-text-2);
+    }
+    .ok-sci-caveat b { color: var(--bw-text-1); }
+    .ok-sci-status-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .ok-sci-status {
+      padding: 12px; border-radius: 14px; border: 1px solid var(--bw-border);
+      background: var(--bw-card); text-align: center;
+    }
+    .ok-sci-status .ok-sci-status-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; margin-bottom: 4px;
+    }
+    .ok-sci-status .ok-sci-status-copy { font-size: 11.5px; color: var(--bw-text-3); line-height: 1.35; }
+    .ok-sci-status--overdue { border-left: 3px solid var(--bw-orange); }
+    .ok-sci-status--soon { border-left: 3px solid var(--bw-support-amber); }
+    .ok-sci-status--ok { border-left: 3px solid var(--bw-border); }
+    .ok-sci-cite {
+      font-size: 12px; color: var(--bw-text-3); line-height: 1.5;
+      padding: 12px 0 4px;
+    }
+    .ok-sci-cite a { color: var(--bw-blue); text-decoration: none; font-weight: 500; }
+    .ok-btn-science {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 999px;
+      border: 1px solid rgba(37,86,182,0.35);
+      background: linear-gradient(135deg, rgba(37,86,182,0.12), rgba(243,100,64,0.08));
+      color: var(--bw-text-1); font-weight: 600; font-size: 14px;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ok-btn-science:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(37,86,182,0.18);
+    }
+    .ok-btn-science i { color: var(--bw-blue); font-size: 18px; }
+    @media (max-width: 600px) {
+      .ok-sci-status-row { grid-template-columns: 1fr; }
+      .ok-sci-stage-card { grid-template-columns: 60px 1fr; }
+    }
+
+    
+  .ok-feat-ico{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+    .ok-feat-ico i{font-size:26px;color:#fff;}
+    .ok-theme-toggle{position:fixed;bottom:16px;right:16px;z-index:100;height:36px;padding:0 14px;border-radius:999px;background:var(--bw-card);border:1px solid var(--bw-border);box-shadow:0 2px 12px rgba(0,0,0,.08);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s,border-color .2s;font-size:13px;font-weight:500;color:var(--bw-text-2);font-family:inherit}
+    .ok-theme-toggle:hover{border-color:var(--bw-blue);color:var(--bw-blue)}
+    .ok-theme-toggle i{font-size:16px}
+      /* ── Orbit polish ── */
+    .ok-orbit-pulse{fill:var(--bw-blue);opacity:.16;transform-box:fill-box;transform-origin:center;animation:okpulse 2.8s ease-in-out infinite}
+    @keyframes okpulse{0%,100%{opacity:.10;transform:scale(1)}50%{opacity:.22;transform:scale(1.14)}}
+    /* ── Interactive orbit card ── */
+    .ok-pop{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(9,14,28,.46);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .ok-pop.show{opacity:1;pointer-events:auto}
+    .ok-pop-card{width:100%;max-width:360px;background:var(--bw-card);border:1px solid var(--bw-border);border-radius:20px;box-shadow:0 26px 64px rgba(0,0,0,.30);overflow:hidden;transform:translateY(14px) scale(.95);transition:transform .26s cubic-bezier(.2,.85,.25,1)}
+    .ok-pop.show .ok-pop-card{transform:none}
+    .ok-pop-hero{position:relative;padding:22px 22px 18px;display:flex;align-items:center;gap:14px;overflow:hidden}
+    .ok-pop-hero::before{content:"";position:absolute;inset:0;opacity:.16;background:var(--ok-pop-accent)}
+    .ok-pop-av{position:relative;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;font-family:Sora,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.20);flex-shrink:0;background:var(--ok-pop-accent)}
+    .ok-pop-htext{position:relative;min-width:0}
+    .ok-pop-name{font-family:Sora,sans-serif;font-weight:700;font-size:18px;color:var(--bw-text-1);line-height:1.2;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ok-pop-pill{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:3px 11px;border-radius:999px;color:#fff;background:var(--ok-pop-accent)}
+    .ok-pop-body{padding:8px 22px 2px}
+    .ok-pop-memo{font-size:13px;color:var(--bw-text-3);line-height:1.5;margin:2px 0 15px}
+    .ok-pop-rows{display:grid;grid-template-columns:1fr 1fr;gap:13px 14px;margin-bottom:8px}
+    .ok-pop-row-full{grid-column:1/-1}
+    .ok-pop-k{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--bw-text-4);margin-bottom:3px}
+    .ok-pop-v{font-size:14px;color:var(--bw-text-2);font-weight:500}
+    .ok-pop-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+    .ok-pop-acts{display:flex;gap:8px;padding:14px 22px 20px}
+    .ok-pop-acts .bw-btn{flex:1;justify-content:center}
+    .ok-pop-x{position:absolute;top:12px;right:12px;z-index:2;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.28);color:#fff;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+    .ok-pop-x:hover{background:rgba(255,255,255,.45)}
+      /* ── Hero lockup (centered product-page stack) ── */
+    .ok-hero{text-align:center;align-items:center}
+    .ok-hero h1{text-align:center}
+    .ok-hero-tagline{text-align:center;margin-left:auto;margin-right:auto}
+    .ok-hero > div[style*="display:flex"]{justify-content:center}
+    /* ── What is OrbitKeep? ── */
+    .ok-whatis-head{text-align:center;margin-bottom:22px}
+    .ok-whatis-title{font-family:Sora,sans-serif;font-size:22px;font-weight:700;color:var(--bw-text-1);margin:10px 0 8px}
+    .ok-whatis-pitch{font-size:15px;line-height:1.6;color:var(--bw-text-2);max-width:520px;margin:0 auto}
+    .ok-whatis-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px}
+    .ok-whatis-col{text-align:center}
+    .ok-whatis-ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+    .ok-whatis-ico i{font-size:22px;color:#fff}
+    .ok-whatis-col h3{font-family:Sora,sans-serif;font-size:15px;font-weight:600;color:var(--bw-text-1);margin:0 0 5px}
+    .ok-whatis-col p{font-size:13px;line-height:1.55;color:var(--bw-text-3);margin:0}
+    .ok-whatis-foot{font-size:13px;line-height:1.6;color:var(--bw-text-3);text-align:center;border-top:1px solid var(--bw-border);padding-top:16px;margin:0}
+    .ok-whatis-foot b{color:var(--bw-text-1);font-weight:600}
+      /* ── Hero video background ── */
+    .ok-hero>*{position:relative;z-index:2}
+    .ok-hero-bg{position:absolute!important;inset:0;width:100%;height:100%;object-fit:cover;z-index:0!important;pointer-events:none}
+    .ok-hero-ov{position:absolute!important;inset:0;z-index:1!important;pointer-events:none;background:linear-gradient(180deg,rgba(6,10,22,.28) 0%,rgba(6,10,22,.60) 66%,rgba(6,10,22,.82) 100%)}
+      @media (max-width:600px){#ok-start-path > div:nth-child(3){grid-template-columns:1fr}}
+      .ok-hero{justify-content:center}
+  </style>
+</head>
+<body class="bw bw-stack" data-bw-theme="light">
+
+  <!-- ═══ LANDING ═══ -->
+  <div id="ok-landing" class="ok-view active">
+    <div class="ok-hero">
+      <div class="ok-hero-lockup" style="text-align:center;margin-bottom:18px;color:#fff"><svg width="64" height="64" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:inline-block;vertical-align:middle"><circle cx="36" cy="36" r="32" stroke="currentColor" stroke-opacity="0.30" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="36" cy="36" r="18" stroke="currentColor" stroke-opacity="0.50" stroke-width="1.5"/><circle cx="36" cy="18" r="3.5" fill="#2556B6"/><circle cx="36" cy="54" r="3.5" fill="#2556B6"/><circle cx="36" cy="4" r="4" fill="#2556B6"/><circle cx="63.7" cy="52" r="4" fill="#FFCF5C"/><circle cx="8.3" cy="52" r="4" fill="#F36440"/><circle cx="36" cy="36" r="6" fill="#2556B6"/></svg><div style="font-family:Sora,sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:.02em;margin-top:8px">OrbitKeep</div><div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:3px;font-style:italic">Your personal relationship keeper</div></div>
+      <h1>Keep everyone who matters<br><span>in your orbit</span></h1>
+      <p class="ok-hero-tagline">A personal relationship keeper that ensures the people you care about never quietly drift away.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="bw-btn bw-btn--lg" onclick="okStartFresh()">Start Your Orbit</button>
+        <button class="bw-btn bw-btn--lg bw-btn--secondary" onclick="okTryDemo()">Try the Demo</button>
+        <button class="bw-btn bw-btn--lg bw-btn--secondary" onclick="okShowView('ok-science')">The Science</button>
+      </div>
+    </div>
+    <div class="bw-section ok-whatis" style="padding:26px 22px;margin-bottom:16px">
+      <div class="ok-whatis-head" style="color:var(--bw-text-3)"><svg width="60" height="60" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:inline-block;vertical-align:middle"><circle cx="36" cy="36" r="32" stroke="currentColor" stroke-opacity="0.30" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="36" cy="36" r="18" stroke="currentColor" stroke-opacity="0.50" stroke-width="1.5"/><circle cx="36" cy="18" r="3.5" fill="#2556B6"/><circle cx="36" cy="54" r="3.5" fill="#2556B6"/><circle cx="36" cy="4" r="4" fill="#2556B6"/><circle cx="63.7" cy="52" r="4" fill="#FFCF5C"/><circle cx="8.3" cy="52" r="4" fill="#F36440"/><circle cx="36" cy="36" r="6" fill="#2556B6"/></svg>
+        <h2 class="ok-whatis-title">What is OrbitKeep?</h2>
+        <p class="ok-whatis-pitch">OrbitKeep tracks the people who matter and nudges you to reach out before they drift away.</p>
+      </div>
+      <div class="ok-whatis-cols">
+        <div class="ok-whatis-col"><div class="ok-whatis-ico" style="background:linear-gradient(135deg,#2556b6,#5b8def)"><i class="ph ph-target"></i></div><h3>Track</h3><p>Keep everyone who matters in one orbit — with the platforms and topics you share.</p></div>
+        <div class="ok-whatis-col"><div class="ok-whatis-ico" style="background:linear-gradient(135deg,#e8804a,#ffd15c)"><i class="ph ph-bell-ringing"></i></div><h3>Remember</h3><p>Set a cadence for each person and get a gentle nudge before the connection fades.</p></div>
+        <div class="ok-whatis-col"><div class="ok-whatis-ico" style="background:linear-gradient(135deg,#f36440,#ff8a5c)"><i class="ph ph-heart"></i></div><h3>Connect</h3><p>Log a quick hello and watch them glide back toward the center of your orbit.</p></div>
+      </div>
+      <p class="ok-whatis-foot">Grounded in friendship science: it takes roughly <b>50 hours</b> to turn an acquaintance into a casual friend, <b>90</b> to become friends, and <b>200+</b> to become close. OrbitKeep helps you show up before the window closes.</p>
+    </div>
+    <div class="bw-section" style="padding:20px;margin-bottom:16px">
+      <div class="ok-problem-row">
+        <div class="ok-problem-img" role="img" aria-label="Friends having coffee together"></div>
+        <div class="ok-problem-body">
+          <div class="bw-section__head" style="margin-bottom:12px"><span class="bw-section__title"><b>The problem</b></span></div>
+          <p class="ok-problem-quote">Your relationships are scattered across <b>Instagram, Discord, email, WhatsApp</b> — a dozen apps. The important people slowly fall through the cracks, not because you don't care, but because <b>nothing reminds you to reach out</b> before the connection fades.</p>
+        </div>
+      </div>
+    </div>
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>How it works</b></span></div>
+      <div class="ok-steps">
+        <div class="ok-step"><div class="ok-step-img" style="background-image:url('https://reson-assets.clawdy.dev/avatars/aeb15128-cbe1-49e8-968d-adecb91499cd.png')"></div><div class="ok-step-body"><div class="ok-step-num">1</div><div class="ok-step-title">Add the people who matter</div><div class="ok-step-copy">Name, how you met, the platforms you talk on, and what you share.</div></div></div>
+        <div class="ok-step"><div class="ok-step-img" style="background-image:url('https://reson-assets.clawdy.dev/avatars/aabad90a-f5e4-41f4-874a-e1cfe3a64be7.png')"></div><div class="ok-step-body"><div class="ok-step-num">2</div><div class="ok-step-title">Log each interaction</div><div class="ok-step-copy">Every time you connect, log it. OrbitKeep recalculates when you're next due.</div></div></div>
+        <div class="ok-step"><div class="ok-step-img" style="background-image:url('https://reson-assets.clawdy.dev/avatars/66e299d1-76cd-46b5-be72-5b01af9bd47c.png')"></div><div class="ok-step-body"><div class="ok-step-num">3</div><div class="ok-step-title">Never miss a beat</div><div class="ok-step-copy">Your dashboard surfaces who's overdue and who's due soon, so you reach out in time.</div></div></div>
+      </div>
+    </div>
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>What's inside</b></span></div>
+      <div class="ok-feats-grid">
+        <div class="ok-feat-card"><div class="ok-feat-ico" style="background:linear-gradient(135deg,#2556b6,#5b8def)"><i class="ph ph-address-book"></i></div><div><div class="ok-feat-title">Rich person cards</div><div class="ok-feat-copy">Memo, platform tags, shared topics, last contact, and next due — all in one place.</div></div></div>
+        <div class="ok-feat-card"><div class="ok-feat-ico" style="background:linear-gradient(135deg,#f36440,#ffa06a)"><i class="ph ph-clock-countdown"></i></div><div><div class="ok-feat-title">Smart due dates</div><div class="ok-feat-copy">Set a cadence per person. Logging an interaction auto-schedules your next reach-out.</div></div></div>
+        <div class="ok-feat-card"><div class="ok-feat-ico" style="background:linear-gradient(135deg,#e8804a,#ffd15c)"><i class="ph ph-bell-ringing"></i></div><div><div class="ok-feat-title">Due Soon at a glance</div><div class="ok-feat-copy">Overdue and due-soon people rise to the top so nothing slips.</div></div></div>
+        <div class="ok-feat-card"><div class="ok-feat-ico" style="background:linear-gradient(135deg,#3a6ea5,#79b0e6)"><i class="ph ph-funnel"></i></div><div><div class="ok-feat-title">Filter by platform</div><div class="ok-feat-copy">Jump to everyone you talk to on Discord, LinkedIn, Instagram, and more.</div></div></div>
+      </div>
+    </div>
+    <div class="ok-social">
+      <div class="ok-social-avatars">
+        <div class="ok-social-avatar" style="background:linear-gradient(135deg,#2556b6,#5b8def);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">A</div>
+        <div class="ok-social-avatar" style="background:linear-gradient(135deg,#f36440,#ffa06a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">M</div>
+        <div class="ok-social-avatar" style="background:linear-gradient(135deg,#e8804a,#ffd15c);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">S</div>
+        <div class="ok-social-avatar" style="background:linear-gradient(135deg,#3a6ea5,#79b0e6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">J</div>
+      </div>
+      <div class="ok-social-text">Trusted by people who <b>care enough to keep track</b></div>
+    </div>
+    <div style="text-align:center;margin:8px 0 8px"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="bw-btn bw-btn--lg" onclick="okStartFresh()">Start Your Orbit</button>
+      <button class="bw-btn bw-btn--lg bw-btn--secondary" onclick="okTryDemo()">Try the Demo</button>
+      <button class="bw-btn bw-btn--lg bw-btn--secondary" onclick="okShowView('ok-science')">The Science</button>
+    </div></div>
+  </div>
+
+  <!-- ═══ DASHBOARD with ORBIT ═══ -->
+  <div id="ok-dashboard" class="ok-view">
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+        <span class="bw-eyebrow" style="cursor:pointer" onclick="okShowView('ok-landing')">&larr; About OrbitKeep</span>
+        <span class="bw-eyebrow" style="cursor:pointer;color:var(--bw-blue)" onclick="okShowView('ok-science')">How it Works? · Science</span>
+      </div>
+      <h1 class="bw-title" style="font-size:28px">Your <span class="bw-thin">relationship orbit</span></h1>
+      <p class="bw-summary" style="font-size:14px">Never let important connections fade. Track who matters and when to reach out.</p>
+    </div>
+
+    <!-- ORBIT VISUALIZATION -->
+    <div class="ok-orbit-wrap" id="ok-orbit-wrap">
+      <svg id="ok-orbit-svg" class="ok-orbit-svg" viewBox="0 0 500 500"></svg>
+      <div class="ok-orbit-tooltip" id="ok-orbit-tooltip">
+        <div class="ok-orbit-tooltip-name" id="ok-tip-name"></div>
+        <div class="ok-orbit-tooltip-meta" id="ok-tip-meta"></div>
+      </div>
+    </div>
+
+    <div class="ok-orbit-legend">
+      <div class="ok-orbit-legend-item"><div class="ok-orbit-legend-dot" style="background:var(--bw-blue)"></div>On track</div>
+      <div class="ok-orbit-legend-item"><div class="ok-orbit-legend-dot" style="background:var(--bw-support-amber)"></div>Due soon</div>
+      <div class="ok-orbit-legend-item"><div class="ok-orbit-legend-dot" style="background:var(--bw-orange)"></div>Overdue</div>
+      <div class="ok-orbit-legend-item"><div class="ok-orbit-legend-dot" style="background:var(--bw-text-4)"></div>No contact yet</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="ok-orbit-stat-row" id="ok-stats"></div>
+
+    <div class="ok-filters" id="ok-filters"></div>
+
+    <div id="ok-overdue-sec" class="bw-section" style="display:none">
+      <div class="bw-section__head"><span class="bw-section__title"><b>Overdue</b></span><span class="bw-section__total" id="ok-overdue-ct"></span></div>
+      <div class="ok-cards" id="ok-overdue-cards"></div>
+    </div>
+    <div id="ok-soon-sec" class="bw-section" style="display:none">
+      <div class="bw-section__head"><span class="bw-section__title"><b>Due soon</b></span><span class="bw-section__total" id="ok-soon-ct"></span></div>
+      <div class="ok-cards" id="ok-soon-cards"></div>
+    </div>
+    <div id="ok-ok-sec" class="bw-section" style="display:none">
+      <div class="bw-section__head"><span class="bw-section__title"><b>On track</b></span><span class="bw-section__total" id="ok-ok-ct"></span></div>
+      <div class="ok-cards" id="ok-ok-cards"></div>
+    </div>
+    <div id="ok-empty" class="bw-empty" style="display:none">
+      <i class="ph ph-ring bw-empty__icon" style="font-size:40px"></i>
+      <div style="font-size:20px;font-weight:600;margin-bottom:4px">Your orbit is empty</div>
+      <div style="color:var(--bw-text-3);margin-bottom:16px">Add the people who matter and never lose track.</div>
+      <button class="bw-btn" onclick="okShowAdd()">Add person</button>
+    </div>
+    <div style="text-align:center;margin-top:20px"><button class="bw-btn" onclick="okShowAdd()">+ Add person</button></div>
+  </div>
+
+  <!-- ═══ ADD / EDIT ═══ -->
+  <div id="ok-start-path" class="ok-view">
+  <div style="text-align:center;margin-bottom:8px">
+    <span class="bw-eyebrow" style="cursor:pointer" onclick="okShowView('ok-landing')">&larr; Back</span>
+  </div>
+  <div style="text-align:center;margin-bottom:28px">
+    <h1 class="bw-title" style="font-size:28px">Choose your path</h1>
+    <p class="bw-summary" style="font-size:15px">Two ways to build your orbit — pick what fits.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:560px;margin:0 auto">
+    <div style="border-radius:22px;border:1px solid var(--bw-border);background:var(--bw-card);padding:32px 24px;text-align:center;display:flex;flex-direction:column;align-items:center">
+      <div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#2556b6,#5b8def);display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 6px 20px rgba(37,86,182,.25)"><i class="ph ph-hand-pointing" style="color:#fff;font-size:30px"></i></div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px">Manual</div>
+      <div style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:rgba(37,186,108,.1);color:#25b86c;margin-bottom:10px">Available Now</div>
+      <p style="font-size:13px;color:var(--bw-text-3);line-height:1.55;margin:0 0 20px">Add people yourself. Full control — names, notes, platforms, cadence. You know your relationships best.</p>
+      <button class="bw-btn bw-btn--lg" style="width:100%;margin-top:auto" onclick="S.cleared=true;save();okShowAdd()">Get started</button>
+    </div>
+    <div style="border-radius:22px;border:1px solid var(--bw-border);background:var(--bw-card);padding:32px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#f36440,#ffd15c)"></div>
+      <div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#f36440,#ffd15c);display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 6px 20px rgba(243,100,64,.2)"><i class="ph ph-sparkle" style="color:#fff;font-size:30px"></i></div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px">Bloome Friend Agent</div>
+      <div style="display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--bw-muted);color:var(--bw-text-3);margin-bottom:10px">Coming Soon</div>
+      <p style="font-size:13px;color:var(--bw-text-3);line-height:1.55;margin:0 0 20px">Our AI agent scans your contacts, builds your orbit automatically, and nudges you when it's time to reach out.</p>
+      <button class="bw-btn bw-btn--lg bw-btn--secondary" style="width:100%;margin-top:auto;opacity:.7;cursor:not-allowed" disabled>Coming soon</button>
+    </div>
+  </div>
+</div>
+  <div id="ok-add" class="ok-view">
+    <div style="margin-bottom:20px">
+      <span class="bw-eyebrow" style="cursor:pointer" onclick="okShowView('ok-dashboard');okRenderDashboard()">Back</span>
+      <h1 class="bw-title" style="font-size:24px" id="ok-form-title">Add <span class="bw-thin">person</span></h1>
+    </div>
+    <div class="bw-section" style="padding:20px">
+      <div class="bw-field" style="margin-bottom:12px"><label class="bw-label">Name *</label><input id="ok-in-name" class="bw-input" placeholder="e.g. Alex Chen" style="width:100%"></div>
+      <div class="bw-field" style="margin-bottom:12px"><label class="bw-label">Memo / How we met</label><textarea id="ok-in-memo" class="bw-textarea" rows="3" placeholder="e.g. Met at a conference, works on AI features" style="width:100%;resize:vertical"></textarea></div>
+      <div class="ok-form-grid"><div class="bw-field"><label class="bw-label">Platforms</label><input id="ok-in-platforms" class="bw-input" placeholder="Instagram, Discord, LinkedIn" style="width:100%"></div><div class="bw-field"><label class="bw-label">Shared topics</label><input id="ok-in-topics" class="bw-input" placeholder="AI, Startups, Book Club" style="width:100%"></div></div>
+      <div class="ok-form-grid"><div class="bw-field"><label class="bw-label">Last contact date</label><input id="ok-in-last" type="date" class="bw-input" style="width:100%"></div><div class="bw-field"><label class="bw-label">Contact frequency (days)</label><input id="ok-in-freq" type="number" class="bw-input" value="30" min="1" max="365" style="width:100%"></div></div>
+      <div style="display:flex;gap:8px;margin-top:16px"><button class="bw-btn" onclick="okSavePerson()" id="ok-save-btn">Add person</button><button class="bw-btn bw-btn--secondary" onclick="okShowView('ok-dashboard');okRenderDashboard()">Cancel</button></div>
+    </div>
+  </div>
+
+  <!-- ═══ DETAIL ═══ -->
+  <div id="ok-detail" class="ok-view">
+    <div style="margin-bottom:20px">
+      <span class="bw-eyebrow" style="cursor:pointer" onclick="okShowView('ok-dashboard');okRenderDashboard()">Back</span>
+      <h1 class="bw-title" style="font-size:24px" id="ok-det-name"></h1>
+      <p id="ok-det-memo" class="bw-summary" style="font-size:14px"></p>
+    </div>
+    <div class="bw-section" style="padding:20px;margin-bottom:16px"><div class="ok-detail-grid" id="ok-det-grid"></div></div>
+    <div class="bw-section" style="padding:16px 20px;margin-bottom:16px">
+      <div class="bw-label" style="color:var(--bw-blue);margin-bottom:12px;font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase">Log interaction</div>
+      <div class="ok-form-row3"><div><input id="ok-log-date" type="date" class="bw-input" style="width:100%"></div><div><input id="ok-log-notes" class="bw-input" placeholder="What did you discuss?" style="width:100%"></div><div><button class="bw-btn" onclick="okLogInteraction()">Log</button></div></div>
+    </div>
+    <div class="bw-section" style="padding:16px 20px">
+      <div class="bw-label" style="margin-bottom:12px;font-size:11px;letter-spacing:.05em;text-transform:uppercase">Interaction history</div>
+      <div id="ok-history"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px"><button class="bw-btn bw-btn--secondary" onclick="okEditPerson()">Edit</button><button class="bw-btn" style="background:var(--bw-orange);color:white" onclick="okDeletePerson()">Delete</button></div>
+  </div>
+
+  <!-- ═══ SCIENCE ═══ -->
+  <div id="ok-science" class="ok-view">
+    <div style="margin-bottom:8px">
+      <span class="bw-eyebrow" style="cursor:pointer" onclick="okShowView('ok-landing')">&larr; Back to home</span>
+    </div>
+
+    <div class="ok-sci-hero">
+      <span class="bw-badge">The science behind OrbitKeep</span>
+      <h1>How friendship<br><span class="bw-thin">actually forms</span></h1>
+      <p class="bw-summary">OrbitKeep is built on research about <b>time</b>, <b>attention</b>, and <b>intentional contact</b> — then turned into a simple dashboard you can act on.</p>
+      <div class="ok-sci-pillrow">
+        <div class="ok-sci-pill ok-sci-pill--em"><b>~50h</b> casual friend</div>
+        <div class="ok-sci-pill ok-sci-pill--em"><b>~90h</b> friend</div>
+        <div class="ok-sci-pill ok-sci-pill--em"><b>200h+</b> close friend</div>
+      </div>
+    </div>
+
+    <!-- Hall headline stages -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head">
+        <span class="bw-section__title"><b>Hall’s hours</b> <span class="bw-thin">to climb stages</span></span>
+        <span class="bw-section__total">most-cited</span>
+      </div>
+      <p style="font-size:13px;color:var(--bw-text-3);margin:0 0 12px;line-height:1.5">
+        Jeffrey A. Hall (2018/19) studied how many hours people spend together before they rate someone as a closer friend. The viral cutoffs (~50% chance of moving up a level):
+      </p>
+      <div class="ok-sci-stage">
+        <div class="ok-sci-stage-card">
+          <div class="ok-sci-stage-hrs">~50<span>hours</span></div>
+          <div>
+            <div class="ok-sci-stage-title">Acquaintance → casual friend</div>
+            <div class="ok-sci-stage-copy">Often summarized as <b>40–60 hours</b>. First real “we hang out” relationship, not just name recognition.</div>
+          </div>
+        </div>
+        <div class="ok-sci-stage-card">
+          <div class="ok-sci-stage-hrs">~90<span>hours</span></div>
+          <div>
+            <div class="ok-sci-stage-title">Casual friend → friend</div>
+            <div class="ok-sci-stage-copy">Often <b>80–100 hours</b>. Someone you’d actively plan time with — not only see when convenient.</div>
+          </div>
+        </div>
+        <div class="ok-sci-stage-card">
+          <div class="ok-sci-stage-hrs">200+<span>hours</span></div>
+          <div>
+            <div class="ok-sci-stage-title">Friend → close / good friend</div>
+            <div class="ok-sci-stage-copy">One analysis put the ~50% transition near <b>~219 hours</b>. Shared life, not occasional catch-ups.</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--bw-text-3);margin:12px 0 0;line-height:1.45">
+        KU’s summary of combined results: <b>40–60 → casual</b>, <b>80–100 → friend</b>, <b>200+ → good/close</b>. Regression point estimates sometimes cited: ~94 / ~164 / ~219. Descriptive emergence can appear earlier (~30 / ~50 / ~140 / ~300 for best). The popular <b>50 / 90 / 200</b> is a clean average — not a rigid law.
+      </p>
+    </div>
+
+    <!-- How study was done -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>How the study</b> <span class="bw-thin">was done</span></span></div>
+      <div class="ok-sci-map">
+        <div class="ok-sci-map-row">
+          <div>
+            <strong>Study 1 — 355 adults</strong>
+            <p>People who had moved in the last six months named someone new they’d met (not family/romance/prior friend), estimated hours spent, and rated the relationship.</p>
+          </div>
+        </div>
+        <div class="ok-sci-map-row">
+          <div>
+            <strong>Study 2 — 112 KU freshmen</strong>
+            <p>Followed over the first weeks of school as new acquaintances formed, with follow-ups as friendships crystallized.</p>
+          </div>
+        </div>
+      </div>
+      <p class="ok-sci-cite">
+        Hall, J. A. — <i>Journal of Social and Personal Relationships</i> (online 2018).
+        DOI: <a href="https://doi.org/10.1177/0265407518761225" target="_blank" rel="noopener">10.1177/0265407518761225</a>
+      </p>
+    </div>
+
+    <!-- Caveats -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>What the research</b> <span class="bw-thin">actually says</span></span></div>
+      <div class="ok-sci-caveat"><b>Time is necessary, not sufficient.</b> Hundreds of hours with coworkers can still leave you “acquaintances” if you never socialize outside work or simply don’t click. Work co-presence counts less than leisure/social time.</div>
+      <div class="ok-sci-caveat"><b>What you do matters.</b> Faster closeness linked to joking, meaningful conversation, catching up, and leisure — not just sharing a classroom or desk.</div>
+      <div class="ok-sci-caveat"><b>It’s mutual and voluntary.</b> You can’t force the hours. Hall’s practical advice: invite people and change context (lunch, drinks, non-work hangouts) to signal “I want friendship.”</div>
+      <div class="ok-sci-caveat"><b>Speed of accumulation matters.</b> People who climbed stages often doubled or tripled time over weeks — not drip-fed hours over years. Adult life after school/work stops forcing contact is exactly why friendship feels hard.</div>
+      <div class="ok-sci-caveat" style="margin-bottom:0"><b>Limits of the data.</b> US movers + college freshmen; self-reported hours; “friend” labels are subjective. Don’t treat 50/90/200 as universal across every culture or personality.</div>
+    </div>
+
+    <!-- Dunbar -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>Dunbar’s layers</b> <span class="bw-thin">counts, not hours</span></span></div>
+      <p style="font-size:13px;color:var(--bw-text-3);margin:0 0 10px;line-height:1.5">
+        Robin Dunbar’s idea: we only have room for so many relationships at each depth. Hall quantified hours to <i>form</i> closeness; Dunbar limits how many bonds you can <i>maintain</i>.
+      </p>
+      <div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n">~5</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">Intimate / closest circle</div><div class="ok-sci-layer-copy">Weekly-scale attention in practice</div></div></div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n ok-sci-layer-n--mid">~15</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">Good friends</div><div class="ok-sci-layer-copy">Regular, high-trust contact</div></div></div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n ok-sci-layer-n--mid">~50</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">Friends</div><div class="ok-sci-layer-copy">Meaningful but less frequent</div></div></div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n">~150</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">Meaningful contacts</div><div class="ok-sci-layer-copy">Classic “Dunbar’s number”</div></div></div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n ok-sci-layer-n--outer">~500</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">Acquaintances</div><div class="ok-sci-layer-copy">Recognize + light history</div></div></div>
+        <div class="ok-sci-layer"><div class="ok-sci-layer-n ok-sci-layer-n--outer">~1,500</div><div class="ok-sci-layer-body"><div class="ok-sci-layer-title">People you can recognize</div><div class="ok-sci-layer-copy">Faces & names, not bonds</div></div></div>
+      </div>
+    </div>
+
+    <!-- Real-life pace -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>What those hours</b> <span class="bw-thin">look like</span></span></div>
+      <div class="ok-sci-map">
+        <div class="ok-sci-map-row">
+          <div><strong>~50h · casual friend</strong><p>≈ 2 hours/week for ~6 months, or a few intense weekends + weekly hangs.</p></div>
+          <span class="ok-sci-badge-freq">~biweekly+</span>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>~90h · friend</strong><p>≈ 2–3 hours/week for most of a year, or denser over a semester.</p></div>
+          <span class="ok-sci-badge-freq">weekly-ish</span>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>200h+ · close friend</strong><p>≈ 4 hours/week for a year — or a summer of shared life (travel, roommates, project, kids’ sports).</p></div>
+          <span class="ok-sci-badge-freq">high density</span>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:var(--bw-text-3);margin:12px 0 0;line-height:1.45">
+        Catch up only a couple of hours a month and close friendship can take years — which is why adult friendship feels hard once school and work stop forcing hours together.
+      </p>
+    </div>
+
+    <!-- OrbitKeep metric alignment -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>How this maps</b> <span class="bw-thin">to your dashboard</span></span></div>
+      <p style="font-size:13px;color:var(--bw-text-3);margin:0 0 12px;line-height:1.5">
+        OrbitKeep does <b>not</b> track raw co-presence hours (Hall’s raw measure). It tracks what you can control: <b>intentional contact cadence</b> — the habit that accumulates quality time over months.
+      </p>
+
+      <div class="bw-section__head" style="margin-bottom:8px"><span class="bw-section__title" style="font-size:14px"><b>Dashboard status</b> <span class="bw-thin">(live product)</span></span></div>
+      <div class="ok-sci-status-row" style="margin-bottom:14px">
+        <div class="ok-sci-status ok-sci-status--overdue">
+          <div class="ok-sci-status-label" style="color:var(--bw-orange)">Overdue</div>
+          <div class="ok-sci-status-copy"><b>next due &lt; today</b><br>Reach out now — connection risk</div>
+        </div>
+        <div class="ok-sci-status ok-sci-status--soon">
+          <div class="ok-sci-status-label" style="color:var(--bw-support-amber)">Due soon</div>
+          <div class="ok-sci-status-copy"><b>within 7 days</b><br>Same window as the Due Soon section</div>
+        </div>
+        <div class="ok-sci-status ok-sci-status--ok">
+          <div class="ok-sci-status-label" style="color:var(--bw-text-3)">On track</div>
+          <div class="ok-sci-status-copy"><b>beyond 7 days</b><br>Cadence healthy for now</div>
+        </div>
+      </div>
+
+      <div class="bw-section__head" style="margin-bottom:8px"><span class="bw-section__title" style="font-size:14px"><b>Core formulas</b></span></div>
+      <div class="ok-sci-map" style="margin-bottom:14px">
+        <div class="ok-sci-map-row">
+          <div><strong>next_due = last_contact + frequency_days</strong>
+            <p>Default frequency is <b>30 days</b>. Logging an interaction sets last_contact (max-date rule) and recomputes next_due.</p>
+          </div>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>New person, no contact yet</strong>
+            <p>last_contact = null → next_due = today → lands in <b>Due Soon</b> so first touch is prompted. UI shows “No contact yet.”</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bw-section__head" style="margin-bottom:8px"><span class="bw-section__title" style="font-size:14px"><b>Suggested cadences</b> <span class="bw-thin">from the research</span></span></div>
+      <div class="ok-sci-map">
+        <div class="ok-sci-map-row">
+          <div><strong>~5 intimate / closest</strong><p>Dunbar weekly-scale attention → keep frequency tight.</p></div>
+          <span class="ok-sci-badge-freq">freq 7 days</span>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>~15 good friends</strong><p>Regular high-trust contact without daily load.</p></div>
+          <span class="ok-sci-badge-freq">freq 14 days</span>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>~50 friends</strong><p>Meaningful but lighter — matches OrbitKeep default.</p></div>
+          <span class="ok-sci-badge-freq">freq 30 days</span>
+        </div>
+        <div class="ok-sci-map-row">
+          <div><strong>Outer orbit / light touch</strong><p>Still worth keeping — mentors, investors, distant friends.</p></div>
+          <span class="ok-sci-badge-freq">freq 60 days</span>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:var(--bw-text-3);margin:12px 0 0;line-height:1.5">
+        Demo seed already uses this range (7 / 14 / 21 / 30 / 60). When you <b>log an interaction</b>, you’re recording intentional time — joking, catching up, hanging out — the quality contact Hall found matters most. The dashboard’s job is simple: surface who needs that next quality hour <i>before</i> they drift out of orbit.
+      </p>
+    </div>
+
+    <!-- Bottom line table-ish -->
+    <div class="bw-section" style="margin-bottom:16px">
+      <div class="bw-section__head"><span class="bw-section__title"><b>Bottom line</b></span></div>
+      <div class="ok-sci-map">
+        <div class="ok-sci-map-row"><div><strong>~50h → casual friend</strong><p>Strongly supported as a useful average from Hall.</p></div><span class="bw-badge">supported</span></div>
+        <div class="ok-sci-map-row"><div><strong>~90h → friend</strong><p>Same — useful average, not a stopwatch.</p></div><span class="bw-badge">supported</span></div>
+        <div class="ok-sci-map-row"><div><strong>200h+ → close friend</strong><p>Same — density of shared life.</p></div><span class="bw-badge">supported</span></div>
+        <div class="ok-sci-map-row"><div><strong>Exact magic numbers for everyone</strong><p>Overstated. Ranges and quality of interaction matter.</p></div><span class="bw-badge">nuance</span></div>
+        <div class="ok-sci-map-row"><div><strong>Hours alone create friends</strong><p>False. Liking, mutuality, and how you spend time matter.</p></div><span class="bw-badge">false</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin:20px 0 12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="bw-btn bw-btn--lg" onclick="okTryDemo()">See it in the Demo</button>
+      <button class="bw-btn bw-btn--lg bw-btn--secondary" onclick="okStartFresh()">Start Your Orbit</button>
+      <button class="bw-btn bw-btn--secondary" onclick="okShowView('ok-landing')">Back to home</button>
+    </div>
+    <p class="ok-sci-cite" style="text-align:center">
+      Sources: Hall (JSPR; DOI above); KU News / secondary coverage of Hall &amp; Dunbar layers.
+      Headline ranges: high confidence. Exact single-hour cutoffs (e.g. “exactly 94”): medium without full PDF tables.
+    </p>
+  </div>
+
+<div class="ok-pop" id="ok-pop" onclick="okPopBackdrop(event)"><div class="ok-pop-card" id="ok-pop-card"></div></div>
+
+<button class="ok-theme-toggle" id="ok-theme-btn" onclick="okToggleTheme()" title="Toggle light/dark"><i class="ph ph-moon" id="ok-theme-icon"></i><span id="ok-theme-label">Dark</span></button>
+
+<script>
+function okApplyTheme(t){document.documentElement.setAttribute('data-bw-theme',t);document.body.setAttribute('data-bw-theme',t);var i=document.getElementById('ok-theme-icon'),l=document.getElementById('ok-theme-label');if(i)i.className=t==='dark'?'ph ph-sun':'ph ph-moon';if(l)l.textContent=t==='dark'?'Light':'Dark';try{localStorage.setItem('ok-theme',t)}catch(e){}}
+function okToggleTheme(){var c=document.documentElement.getAttribute('data-bw-theme')||'light';okApplyTheme(c==='light'?'dark':'light')}
+(function(){var s='light';try{s=localStorage.getItem('ok-theme')||'light'}catch(e){}okApplyTheme(s)})();
+
+var PC={instagram:"#E1306C",discord:"#5865F2",twitter:"#1DA1F2",linkedin:"#0A66C2",youtube:"#FF0000",tiktok:"#555",whatsapp:"#25D366",telegram:"#0088cc",email:"#EA4335",phone:"#34A853",slack:"#4A154B",wechat:"#07C160"};
+function pc(c){return PC[c.toLowerCase()]||"#888";}
+function lymd(d){var m=d.getMonth()+1,day=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(day<10?"0":"")+day;}
+function todayLocal(){return lymd(new Date());}
+function addDaysLocal(ymd,days){var p=(ymd||todayLocal()).split("-");var d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+(days||0));return lymd(d);}
+
+var S={people:[],nid:1,cleared:false,filter:"all",pid:null,epid:null};
+function load(){
+  try{if(window.ResonWidget&&ResonWidget.state){var s=ResonWidget.state.get();if(s){if(s.people)S.people=s.people;S.nid=s.nid||1;S.cleared=!!s.cleared;}}}catch(e){}
+  if(!S.people.length&&!S.cleared){S.people=seed();S.nid=S.people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;save();}
+  else{S.nid=S.people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;}
+}
+function save(){try{if(window.ResonWidget&&ResonWidget.state)ResonWidget.state.set({people:S.people,nid:S.nid,cleared:S.cleared});}catch(e){}}
+function seed(){
+  function ago(d){return addDaysLocal(todayLocal(),-d);}
+  function due(d,f){return addDaysLocal(todayLocal(),-d+f);}
+  return [
+    {id:1,name:"Alex Chen (Sample)",memo:"[Demo] Met at the 2025 AI conference. Works on product at a startup.",platforms:["LinkedIn","Twitter","Discord"],topics:["AI","Product","Side Projects"],lastContact:ago(14),freq:14,nextDue:due(14,14),interactions:[{date:ago(14),notes:"Discussed product roadmap"},{date:ago(28),notes:"Coffee chat"}]},
+    {id:2,name:"Priya Sharma (Sample)",memo:"[Demo] College roommate. Runs a DTC skincare brand.",platforms:["Instagram","WhatsApp"],topics:["DTC","Skincare","Branding"],lastContact:ago(25),freq:30,nextDue:due(25,30),interactions:[{date:ago(25),notes:"Feedback on product shots"}]},
+    {id:3,name:"Marcus Johnson (Sample)",memo:"[Demo] Ex-coworker. Best systems thinker I know.",platforms:["Twitter","Discord","Email"],topics:["Startups","Systems Design","Fintech"],lastContact:ago(10),freq:21,nextDue:due(10,21),interactions:[{date:ago(10),notes:"Monthly startup sync"}]},
+    {id:4,name:"Lena Kowalski (Sample)",memo:"[Demo] Works in venture capital. Keep her in the loop.",platforms:["LinkedIn","Email"],topics:["Fundraising","AI","Marketplace"],lastContact:ago(18),freq:14,nextDue:due(18,14),interactions:[{date:ago(18),notes:"Progress update"}]},
+    {id:5,name:"Devon Park (Sample)",memo:"[Demo] Neighbor and chess buddy. Always down for a game.",platforms:["Discord","Phone"],topics:["Chess","ML","Housing"],lastContact:ago(3),freq:7,nextDue:due(3,7),interactions:[{date:ago(3),notes:"Chess night"}]},
+    {id:6,name:"Sofia Rivera (Sample)",memo:"[Demo] Freelance designer. Talented, worth staying connected.",platforms:["Instagram","Slack","Email"],topics:["Design","Landing Page","Branding"],lastContact:ago(30),freq:30,nextDue:due(30,30),interactions:[{date:ago(30),notes:"Design review"}]},
+    {id:7,name:"Jordan Taylor (Sample)",memo:"[Demo] Former mentor. Now leads research at the university.",platforms:["Email"],topics:["NLP","Academia","Mentorship"],lastContact:ago(55),freq:60,nextDue:due(55,60),interactions:[{date:ago(55),notes:"Long-overdue catch-up"}]},
+    {id:8,name:"Casey Brooks (Sample)",memo:"[Demo] Met at a hackathon — want to stay in touch.",platforms:["Discord","Twitter"],topics:["Hackathons"],lastContact:null,freq:30,nextDue:todayLocal(),interactions:[]}
+  ];
+}
+function ds(p){if(!p.nextDue)return"ok";var t=new Date();t.setHours(0,0,0,0);var d=new Date(p.nextDue);d.setHours(0,0,0,0);var diff=(d-t)/864e5;if(diff<0)return"overdue";if(diff<=7)return"soon";return"ok";}
+function stLabel(s){return s==="overdue"?"Overdue":s==="soon"?"Due soon":"On track";}
+function stColor(s){return s==="overdue"?"var(--bw-orange)":s==="soon"?"var(--bw-support-amber)":s==="none"?"var(--bw-text-4)":"var(--bw-blue)";}
+function dotH(p){return'<span class="ok-dot" style="background:'+pc(p)+'"></span>';}
+function badgeH(t,c){return'<span class="bw-badge'+(c?' '+c:'')+'">'+t+'</span>';}
+function platBadgeH(p){return'<span class="bw-badge">'+dotH(p)+p+'</span>';}
+
+/* ══════════════════════════════════════════════
+   ORBIT VISUALIZATION — the core visual
+   ══════════════════════════════════════════════ */
+var ORBIT_CX=250, ORBIT_CY=250, ORBIT_R=200;
+var RINGS=[
+  {r:60, label:"Close", statusFilter:["ok"]},
+  {r:120, label:"Active", statusFilter:["ok","soon"]},
+  {r:180, label:"Drifting", statusFilter:["soon","overdue","none"]}
+];
+
+function orbitColor(status){
+  if(status==="overdue")return"#F36440";
+  if(status==="soon")return"#FFD15C";
+  if(status==="none")return"#999";
+  return"#2556B6";
+}
+function orbitRadius(person){
+  var s=ds(person);
+  /* deterministic per-person offset (stable across re-renders/filter toggles) */
+  var j30=(person.id*37)%30;
+  var j20=(person.id*37)%20;
+  var j50=(person.id*53)%50;
+  if(s==="overdue")return ORBIT_R-10+j30;
+  if(s==="soon")return ORBIT_R*0.6+j30;
+  if(s==="none")return ORBIT_R*0.85+j20;
+  return 40+j50;
+}
+function orbitInitials(name){
+  var parts=name.split(" ");
+  if(parts.length>=2)return(parts[0][0]+parts[1][0]).toUpperCase();
+  return name.slice(0,2).toUpperCase();
+}
+
+function renderOrbit(){
+  var svg=document.getElementById("ok-orbit-svg");
+  var people=S.people;
+  if(!people.length){svg.innerHTML='<text x="250" y="250" text-anchor="middle" fill="#999" font-family="Sora" font-size="14">Add people to see your orbit</text>';return;}
+
+  var html='';
+  html+='<defs>';
+  html+='<radialGradient id="okCenGrad" cx="50%" cy="34%"><stop offset="0%" stop-color="#6ea0f2"/><stop offset="100%" stop-color="#2556b6"/></radialGradient>';
+  html+='<filter id="okSoft" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0b1224" flood-opacity="0.20"/></filter>';
+  html+='</defs>';
+  /* Rings */
+  html+='<circle cx="'+ORBIT_CX+'" cy="'+ORBIT_CY+'" r="60" class="ok-orbit-ring ok-orbit-ring--inner"/>';
+  html+='<circle cx="'+ORBIT_CX+'" cy="'+ORBIT_CY+'" r="120" class="ok-orbit-ring"/>';
+  html+='<circle cx="'+ORBIT_CX+'" cy="'+ORBIT_CY+'" r="180" class="ok-orbit-ring"/>';
+  /* Ring labels */
+  html+='<text x="'+ORBIT_CX+'" y="'+(ORBIT_CY-65)+'" class="ok-orbit-label">Close</text>';
+  html+='<text x="'+ORBIT_CX+'" y="'+(ORBIT_CY-125)+'" class="ok-orbit-label">Active</text>';
+  html+='<text x="'+ORBIT_CX+'" y="'+(ORBIT_CY-185)+'" class="ok-orbit-label">Drifting</text>';
+
+  /* Center node */
+  html+='<circle cx="'+ORBIT_CX+'" cy="'+ORBIT_CY+'" r="40" class="ok-orbit-pulse"/>';
+  html+='<circle cx="'+ORBIT_CX+'" cy="'+ORBIT_CY+'" r="28" class="ok-orbit-center" style="fill:url(#okCenGrad)" filter="url(#okSoft)"/>';
+  html+='<text x="'+ORBIT_CX+'" y="'+(ORBIT_CY-4)+'" class="ok-orbit-center-text">You</text>';
+  html+='<text x="'+ORBIT_CX+'" y="'+(ORBIT_CY+12)+'" class="ok-orbit-center-sub">'+people.length+' people</text>';
+
+  /* People nodes */
+  var angleStep=(2*Math.PI)/people.length;
+  people.forEach(function(p,i){
+    var s=ds(p);
+    var r=orbitRadius(p);
+    var angle=angleStep*i - Math.PI/2;
+    var x=ORBIT_CX + r*Math.cos(angle);
+    var y=ORBIT_CY + r*Math.sin(angle);
+    var color=orbitColor(s);
+    var nodeR=s==="ok"?20:s==="soon"?18:16;
+    var initials=orbitInitials(p.name);
+
+    html+='<g class="ok-orbit-node" data-pid="'+p.id+'" onclick="okOrbitCard('+p.id+')" onmouseenter="okOrbitTip(event,'+p.id+')" onmouseleave="okOrbitTipHide()">';
+    html+='<circle cx="'+x+'" cy="'+y+'" r="'+(nodeR+7)+'" fill="'+color+'" opacity="0.16"/>';
+    html+='<circle cx="'+x+'" cy="'+y+'" r="'+nodeR+'" fill="'+color+'" filter="url(#okSoft)"/>';
+    html+='<text x="'+x+'" y="'+(y+1)+'" fill="white" font-size="'+(nodeR>18?11:10)+'">'+initials+'</text>';
+    html+='</g>';
+  });
+
+  svg.innerHTML=html;
+}
+
+function okOrbitTip(e,pid){
+  var p=S.people.find(function(x){return x.id===pid;});
+  if(!p)return;
+  var s=ds(p);
+  var tip=document.getElementById("ok-orbit-tooltip");
+  document.getElementById("ok-tip-name").textContent=p.name;
+  var meta=stLabel(s);
+  if(p.lastContact)meta+=' · Last: '+p.lastContact;
+  meta+=' · Every '+p.freq+' days';
+  document.getElementById("ok-tip-meta").textContent=meta;
+  tip.classList.add("show");
+  var wrap=document.getElementById("ok-orbit-wrap");
+  var rect=wrap.getBoundingClientRect();
+  tip.style.left=(e.clientX-rect.left+12)+"px";
+  tip.style.top=(e.clientY-rect.top-10)+"px";
+}
+function okOrbitTipHide(){document.getElementById("ok-orbit-tooltip").classList.remove("show");}
+
+function okAccent(s){return s==="overdue"?"linear-gradient(135deg,#f36440,#ff8a5c)":s==="soon"?"linear-gradient(135deg,#e0913f,#ffcf5c)":s==="none"?"linear-gradient(135deg,#9aa3b2,#c2c9d6)":"linear-gradient(135deg,#2556b6,#5b8def)";}
+function okOrbitCard(pid){
+  var p=S.people.find(function(x){return x.id===pid;});if(!p)return;
+  var s=ds(p);var acc=okAccent(s);
+  var plH="";p.platforms.forEach(function(t){plH+=platBadgeH(t);});if(!plH)plH='<span style="color:var(--bw-text-4);font-size:12px">None</span>';
+  var toH="";p.topics.forEach(function(t){toH+=badgeH(t);});if(!toH)toH='<span style="color:var(--bw-text-4);font-size:12px">None</span>';
+  var glyph=s==="overdue"?"\u26A0 ":s==="soon"?"\u25D4 ":s==="none"?"\u25CB ":"\u2713 ";
+  var card=document.getElementById("ok-pop-card");
+  card.style.setProperty("--ok-pop-accent",acc);
+  card.innerHTML=
+    '<button class="ok-pop-x" onclick="okPopClose()" title="Close">&times;</button>'+
+    '<div class="ok-pop-hero"><div class="ok-pop-av">'+orbitInitials(p.name)+'</div>'+
+      '<div class="ok-pop-htext"><div class="ok-pop-name">'+p.name+'</div>'+
+      '<span class="ok-pop-pill">'+glyph+stLabel(s)+'</span></div></div>'+
+    '<div class="ok-pop-body">'+
+      (p.memo?'<div class="ok-pop-memo">'+p.memo+'</div>':'')+
+      '<div class="ok-pop-rows">'+
+        '<div><div class="ok-pop-k">Last contact</div><div class="ok-pop-v">'+(p.lastContact||"No contact yet")+'</div></div>'+
+        '<div><div class="ok-pop-k">Cadence</div><div class="ok-pop-v">Every '+p.freq+' days</div></div>'+
+        '<div><div class="ok-pop-k">Next due</div><div class="ok-pop-v" style="color:'+stColor(s)+';font-weight:600">'+(p.nextDue||"Not set")+'</div></div>'+
+        '<div><div class="ok-pop-k">Interactions</div><div class="ok-pop-v">'+p.interactions.length+' logged</div></div>'+
+        '<div class="ok-pop-row-full"><div class="ok-pop-k">Platforms</div><div class="ok-pop-badges">'+plH+'</div></div>'+
+        '<div class="ok-pop-row-full"><div class="ok-pop-k">Shared topics</div><div class="ok-pop-badges">'+toH+'</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="ok-pop-acts">'+
+      '<button class="bw-btn" onclick="okQuickLog('+p.id+')">\u2713 Log contact today</button>'+
+      '<button class="bw-btn bw-btn--secondary" onclick="okOpenProfile('+p.id+')">Full profile</button>'+
+    '</div>';
+  document.getElementById("ok-pop").classList.add("show");
+}
+function okQuickLog(pid){var p=S.people.find(function(x){return x.id===pid;});if(!p)return;var d=todayLocal();p.interactions.push({date:d,notes:"[Quick log]"});if(!p.lastContact||d>=p.lastContact)p.lastContact=d;p.nextDue=addDaysLocal(p.lastContact,p.freq||30);save();okRenderDashboard();okOrbitCard(pid);}
+function okOpenProfile(pid){okPopClose();okDetail(pid);}
+function okPopClose(){document.getElementById("ok-pop").classList.remove("show");}
+function okPopBackdrop(e){if(e.target&&e.target.id==="ok-pop")okPopClose();}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")okPopClose();});
+
+
+/* ══════════════════════════════════════════════
+   DASHBOARD RENDERING
+   ══════════════════════════════════════════════ */
+function okRenderDashboard(){
+  renderOrbit();
+  var ps=S.people;var ov=[],so=[],ok=[];
+  ps.forEach(function(p){var s=ds(p);if(s==="overdue")ov.push(p);else if(s==="soon")so.push(p);else ok.push(p);});
+  document.getElementById("ok-stats").innerHTML=
+    '<div class="bw-stat"><div class="bw-stat__label">Total</div><div class="bw-stat__value">'+ps.length+'</div></div>'+
+    '<div class="bw-stat bw-stat--em"><div class="bw-stat__label">Overdue</div><div class="bw-stat__value">'+ov.length+'</div></div>'+
+    '<div class="bw-stat"><div class="bw-stat__label">Due soon</div><div class="bw-stat__value">'+so.length+'</div></div>'+
+    '<div class="bw-stat"><div class="bw-stat__label">On track</div><div class="bw-stat__value">'+ok.length+'</div></div>';
+  var allP=[];ps.forEach(function(p){p.platforms.forEach(function(pl){if(allP.indexOf(pl)===-1)allP.push(pl);});});allP.sort();
+  var fh='<button class="bw-btn'+(S.filter==='all'?'':' bw-btn--secondary')+'" onclick="okFilter(\'all\')">All</button>';
+  allP.forEach(function(p){fh+='<button class="bw-btn'+(S.filter===p?'':' bw-btn--secondary')+'" onclick="okFilter(\''+p+'\')">'+p+'</button>';});
+  document.getElementById("ok-filters").innerHTML=fh;
+  function cards(list){if(!list.length)return"";var h="";list.forEach(function(p){var s=ds(p);var tags="";p.platforms.forEach(function(t){tags+=platBadgeH(t);});p.topics.forEach(function(t){tags+=badgeH(t);});h+='<div class="ok-card ok-card--'+(s==="ok"?"on-track":s)+'" onclick="okDetail('+p.id+')"><div class="ok-card-top"><span class="ok-card-name">'+p.name+'</span><span class="ok-card-status" style="color:'+stColor(s)+'">'+stLabel(s)+'</span></div><div class="ok-card-memo">'+(p.memo||"")+'</div><div class="ok-card-tags">'+tags+'</div><div class="ok-card-foot"><span>Last: '+(p.lastContact||"No contact yet")+'</span><span style="color:'+stColor(s)+'">'+(p.nextDue?"Due: "+p.nextDue:"Set a date")+'</span></div></div>';});return h;}
+  function showSec(a,b,c){var s=document.getElementById(a);if(c.length){s.style.display="";document.getElementById(b).textContent=c.length+" people";}else s.style.display="none";}
+  document.getElementById("ok-overdue-cards").innerHTML=cards(ov);
+  document.getElementById("ok-soon-cards").innerHTML=cards(so);
+  document.getElementById("ok-ok-cards").innerHTML=cards(ok);
+  showSec("ok-overdue-sec","ok-overdue-ct",ov);showSec("ok-soon-sec","ok-soon-ct",so);showSec("ok-ok-sec","ok-ok-ct",ok);
+  document.getElementById("ok-empty").style.display=ps.length?"none":"";
+}
+function okFilter(plat){S.filter=plat;var cs=document.querySelectorAll(".ok-card");for(var i=0;i<cs.length;i++){var c=cs[i];if(plat==="all"){c.style.display="";}else{var bs=c.querySelectorAll(".bw-badge");var show=false;for(var j=0;j<bs.length;j++){if(bs[j].textContent.trim()===plat){show=true;break;}}c.style.display=show?"":"none";}}var btns=document.querySelectorAll("#ok-filters .bw-btn");for(var k=0;k<btns.length;k++){var b=btns[k];var isAll=b.textContent.trim()==="All"&&plat==="all";var isMatch=b.textContent.trim()===plat;if(isAll||isMatch)b.className="bw-btn";else b.className="bw-btn bw-btn--secondary";}}
+function okDetail(pid){S.pid=pid;var p=S.people.find(function(x){return x.id===pid;});if(!p)return okShowView("ok-dashboard");var s=ds(p);document.getElementById("ok-det-name").textContent=p.name;document.getElementById("ok-det-memo").textContent=p.memo||"";var plH="";p.platforms.forEach(function(t){plH+=platBadgeH(t);});if(!plH)plH='<span style="color:var(--bw-text-3)">None</span>';var toH="";p.topics.forEach(function(t){toH+=badgeH(t);});if(!toH)toH='<span style="color:var(--bw-text-3)">None</span>';document.getElementById("ok-det-grid").innerHTML='<div><div class="ok-detail-label">Platforms</div><div class="ok-detail-value" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+plH+'</div></div><div><div class="ok-detail-label">Shared topics</div><div class="ok-detail-value" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+toH+'</div></div><div><div class="ok-detail-label">Last contact</div><div class="ok-detail-value">'+(p.lastContact||"No contact yet")+'</div></div><div><div class="ok-detail-label">Frequency</div><div class="ok-detail-value">Every '+p.freq+' days</div></div><div><div class="ok-detail-label">Next due</div><div class="ok-detail-value" style="color:'+stColor(s)+';font-weight:600">'+(p.nextDue||"Not set")+'</div></div><div><div class="ok-detail-label">Interactions</div><div class="ok-detail-value">'+p.interactions.length+' logged</div></div>';document.getElementById("ok-log-date").value=todayLocal();document.getElementById("ok-log-notes").value="";var hEl=document.getElementById("ok-history");if(p.interactions.length){var sorted=p.interactions.slice().sort(function(a,b){return b.date.localeCompare(a.date);});var hh="";sorted.forEach(function(i){hh+='<div class="ok-interaction"><span class="ok-interaction-date">'+i.date+'</span><span class="ok-interaction-notes">'+(i.notes||"(no notes)")+'</span></div>';});hEl.innerHTML=hh;}else hEl.innerHTML='<p style="color:var(--bw-text-3);font-size:13px">No interactions logged yet.</p>';okShowView("ok-detail");}
+function okLogInteraction(){var p=S.people.find(function(x){return x.id===S.pid;});if(!p)return;var date=document.getElementById("ok-log-date").value||todayLocal();var notes=document.getElementById("ok-log-notes").value.trim();p.interactions.push({date:date,notes:notes});if(!p.lastContact||date>=p.lastContact)p.lastContact=date;p.nextDue=addDaysLocal(p.lastContact,p.freq||30);save();okDetail(S.pid);}
+function okEditPerson(){var p=S.people.find(function(x){return x.id===S.pid;});if(!p)return;S.epid=p.id;document.getElementById("ok-form-title").innerHTML='Edit <span class="bw-thin">person</span>';document.getElementById("ok-save-btn").textContent="Save changes";document.getElementById("ok-in-name").value=p.name;document.getElementById("ok-in-memo").value=p.memo;document.getElementById("ok-in-platforms").value=p.platforms.join(", ");document.getElementById("ok-in-topics").value=p.topics.join(", ");document.getElementById("ok-in-last").value=p.lastContact||"";document.getElementById("ok-in-freq").value=p.freq;okShowView("ok-add");}
+function okDeletePerson(){if(!confirm("Delete this person? This cannot be undone."))return;S.people=S.people.filter(function(x){return x.id!==S.pid;});save();okShowView("ok-dashboard");okRenderDashboard();}
+function okShowAdd(){S.epid=null;document.getElementById("ok-form-title").innerHTML='Add <span class="bw-thin">person</span>';document.getElementById("ok-save-btn").textContent="Add person";document.getElementById("ok-in-name").value="";document.getElementById("ok-in-memo").value="";document.getElementById("ok-in-platforms").value="";document.getElementById("ok-in-topics").value="";document.getElementById("ok-in-last").value="";document.getElementById("ok-in-freq").value=30;okShowView("ok-add");}
+function okSavePerson(){var name=document.getElementById("ok-in-name").value.trim();if(!name)return;var memo=document.getElementById("ok-in-memo").value.trim();var platforms=document.getElementById("ok-in-platforms").value.split(",").map(function(s){return s.trim();}).filter(Boolean);var topics=document.getElementById("ok-in-topics").value.split(",").map(function(s){return s.trim();}).filter(Boolean);var last=document.getElementById("ok-in-last").value||null;var freq=parseInt(document.getElementById("ok-in-freq").value)||30;var nextDue=last?addDaysLocal(last,freq):todayLocal();if(S.epid){var p=S.people.find(function(x){return x.id===S.epid;});if(p){p.name=name;p.memo=memo;p.platforms=platforms;p.topics=topics;p.lastContact=last;p.freq=freq;p.nextDue=nextDue;}}else{S.people.push({id:S.nid++,name:name,memo:memo,platforms:platforms,topics:topics,lastContact:last,freq:freq,nextDue:nextDue,interactions:[]});}save();okShowView("ok-dashboard");okRenderDashboard();}
+function okStartFresh(){S.people=[];S.nid=1;S.filter="all";S.pid=null;S.epid=null;S.cleared=true;save();okShowView("ok-start-path");}
+function okTryDemo(){S.people=seed();S.nid=S.people.reduce(function(m,p){return Math.max(m,p.id);},0)+1;S.cleared=false;S.filter="all";S.pid=null;S.epid=null;save();okShowView("ok-dashboard");okRenderDashboard();}
+function okShowView(id){var vs=document.querySelectorAll(".ok-view");for(var i=0;i<vs.length;i++)vs[i].classList.remove("active");document.getElementById(id).classList.add("active");}
+load();okRenderDashboard();okShowView("ok-landing");
+</script>
+</body>
+</html>
