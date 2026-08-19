@@ -2,7 +2,30 @@
 
 **Personal Relationship Keeper** — keep everyone who matters in your orbit.
 
-OrbitKeep helps you track important people across platforms, set a contact cadence, and get nudged before connections fade. Built as a Bloome interactive widget for the Bloome AI Team Hackathon (2026).
+[![Live demo](https://img.shields.io/badge/Live_demo-bloome.im-111111?style=for-the-badge)](https://bloome.im/s/GXGsK4TI)
+[![Hackathon](https://img.shields.io/badge/Bloome_AI_Hackathon-Winner-2563eb?style=for-the-badge)](https://bloome.im/s/GXGsK4TI)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+
+OrbitKeep helps you track important people across Instagram, Discord, email, WhatsApp and more, set a contact cadence, and get nudged **before** the connection fades.
+
+**Try it now → [bloome.im/s/GXGsK4TI](https://bloome.im/s/GXGsK4TI)**  
+*(Bloome may ask you to log in to *interact*. Use **Continue browsing** to explore the demo, or **Try the Demo** for sample people.)*
+
+---
+
+<p align="center">
+  <img src="assets/img/readme-landing.png" width="90%" alt="OrbitKeep landing — Keep everyone who matters in your orbit" />
+</p>
+
+<p align="center">
+  <img src="assets/img/readme-orbit.png" width="90%" alt="Relationship orbit dashboard with overdue, due-soon, and on-track people" />
+</p>
+
+<p align="center">
+  <img src="assets/img/readme-science.png" width="90%" alt="Science page — Hall friendship hours and Dunbar layers" />
+</p>
+
+---
 
 ## Features
 
@@ -10,13 +33,12 @@ OrbitKeep helps you track important people across platforms, set a contact caden
 - **Interactive person cards** — tap a bubble for status, last contact, next due, platforms, quick log
 - **Cadence engine** — `next_due = last_contact + frequency_days` with local calendar math
 - **Demo + Start Your Orbit** — sample data for demos; clean slate for personal use
-- **Two-path start** — Manual tracking now; Friend Agent path as future extension
 - **Science page** — Hall friendship-hours research + Dunbar layers, mapped to product metrics
 - **Light / dark theme** — light by default, corner toggle
 
 ## Quick start
 
-Open the widget HTML in a browser (or serve statically):
+Open the live widget, or run it standalone (no backend):
 
 ```bash
 # from this directory
@@ -24,58 +46,38 @@ python3 -m http.server 8080
 # open http://localhost:8080
 ```
 
-> **Note:** Full Bloome features (`ResonWidget.state`, theme persistence across sessions, CDN assets) work best when running as a Bloome widget. Local open is fine for layout and logic review; state may not persist without the Bloome host.
+State persists in `localStorage`. Full Bloome features (`ResonWidget.state`, hosted theme) work best in the [live widget](https://bloome.im/s/GXGsK4TI).
 
-## Project layout
-
-```
-.
-├── index.html          # Full OrbitKeep widget (single-file app)
-├── assets/             # Optional media (hero trailer, etc.)
-├── docs/               # Product notes
-└── README.md
-```
-
-## Product model (MVP)
+## Product model
 
 | Entity | Fields |
 |--------|--------|
 | Person | name, memo, platforms[], topics[], last_contact, frequency_days, next_due, interactions[] |
 | Interaction | date, notes |
 
-**Status rules**
-
 | Status | Rule |
 |--------|------|
 | Overdue | `next_due < today` |
 | Due soon | within 7 days |
 | On track | beyond 7 days |
-| No contact yet | `last_contact` null → next due today (first-touch prompt) |
+| No contact yet | `last_contact` null → next due today |
 
 Logging an interaction uses **max-date** (never rewinds last contact).
 
 ## Stack
 
 - Single-file HTML / CSS / JS
-- [Bloome](https://bloome.im) widget runtime (`ResonWidget`)
-- Bloome design system (`.bw` components)
-- No backend required for MVP (local widget state)
+- [Bloome](https://bloome.im) widget runtime (`ResonWidget`) with a localStorage fallback
+- No backend required for the MVP
 
-## Credits
+## Hackathon
 
-Built by the OrbitKeep hackathon team:
+Built for the **Bloome AI Team Hackathon (2026)** — winning entry.
 
-- Mira · Project Lead  
-- Mike · Eng Lead  
-- Iris · Designer  
-- Nova · QA & Experience  
-- Builder · Dev support  
-- Axel · Advanced Builder  
-- Leo · Marketing Video  
-- Bloome Assistant · Coordination & deploy  
+Team: Mira · Mike · Iris · Nova · Builder · Axel · Leo · Bloome Assistant  
 
-Product owner: **Dean Shev**
+Product owner: **Dean Shev** ([@AiAlchemist0](https://github.com/AiAlchemist0))
 
 ## License
 
-MIT — see [LICENSE](./LICENSE)
+[MIT](LICENSE)
