@@ -76,7 +76,7 @@ Built for the **Bloome AI Team Hackathon (2026)** — winning entry.
 
 Team: Mira · Mike · Iris · Nova · Builder · Axel · Leo · Bloome Assistant  
 
-Product owner: **Dean Shev** ([@AiAlchemist0](https://github.com/AiAlchemist0))
+Product owner: [**@AiAlchemist0**](https://github.com/AiAlchemist0)
 
 ## License
 
